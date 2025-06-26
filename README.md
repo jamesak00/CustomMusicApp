@@ -1,6 +1,7 @@
 # CustomMusicApp
 
 This program is still in development for wider functional use and viewing. This is mainly a proof of concept. 
+**Currently only works with a 4k resolution!** (Other resoutions will prevent proper use of the app.)
 
 ## Usage:
 
