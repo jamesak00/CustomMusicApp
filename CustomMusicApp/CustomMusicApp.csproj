@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>JSHCMP.ico</ApplicationIcon>
+    <AssemblyName>JSH Custom Music Player</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="JSHCMP.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AudioSwitcher.AudioApi.CoreAudio" Version="3.0.3" />
+    <PackageReference Include="CoreAudio" Version="1.37.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
+    <PackageReference Include="taglib-sharp-netstandard2.0" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Albums\" />
+    <Folder Include="Data\Albums\" />
+    <Folder Include="Data\Program\" />
+    <Folder Include="Data\Songs\" />
+  </ItemGroup>
+
+</Project>
