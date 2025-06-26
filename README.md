@@ -21,3 +21,4 @@ You can search for songs with the empty bar above the album view and view them i
 - Some filenames may be long and clip into the controls of the program. This is only a visual bug.
 - Upon adding a song to an album for the first time, the tab will switch unintendedly.
 - Using any of the media buttons may crash the program if there isn't anything in the play queue.
+- App may stutter with music playback if host machine is under load, like loading certian programs.
