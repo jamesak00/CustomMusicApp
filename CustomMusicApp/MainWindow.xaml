@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CustomMusicApp"
         mc:Ignorable="d"
         WindowState="Maximized"
-        Title="JSH Custom Music Player" Height="1400" Width="2565">
+        Title="JSH Custom Music Player" MinWidth="800" MinHeight="600">
     <Window.Resources>
         <Style x:Key="MySliderStyle" TargetType="Slider">
             <Setter Property="Template">
@@ -41,18 +41,51 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
         <Style TargetType="Label" x:Key="Outlined">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Label}">
                         <Grid>
-                            <TextBlock Text="{TemplateBinding Content}" Foreground="Black" FontSize="20" FontWeight="Bold">
+                            <TextBlock Text="{TemplateBinding Content}" Foreground="Black" FontSize="20" FontWeight="Bold"
+                                       TextTrimming="CharacterEllipsis" TextWrapping="NoWrap">
                                 <TextBlock.Effect>
                                     <DropShadowEffect ShadowDepth="0" BlurRadius="10" Color="White"/>
                                 </TextBlock.Effect>
                             </TextBlock>
-                            <TextBlock Text="{TemplateBinding Content}" Foreground="Black" FontSize="20" FontWeight="Bold"/>
+                            <TextBlock Text="{TemplateBinding Content}" Foreground="Black" FontSize="20" FontWeight="Bold"
+                                       TextTrimming="CharacterEllipsis" TextWrapping="NoWrap"/>
                         </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SearchBarPlaceholderStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Grid>
+                            <TextBlock x:Name="PlaceholderText"
+                                       Text="{TemplateBinding Tag}"
+                                       Foreground="Gray"
+                                       FontWeight="Normal"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                       Margin="{TemplateBinding Padding}"
+                                       IsHitTestVisible="False"
+                                       Visibility="Collapsed"/>
+
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="False" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Text" Value="">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="PlaceholderText" Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -68,13 +101,27 @@
             <Separator/>
             <MenuItem Header="Open in Audacity" Click="OpenInAudacity_Click"/>
         </ContextMenu>
-
-
     </Window.Resources>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="250"/>
+            <ColumnDefinition Width="*" MinWidth="400"/>
+            <ColumnDefinition Width="Auto" MinWidth="250"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-        <Grid x:Name="grdAlbums" Margin="0,0,1918,284">
-            <ListView x:Name="listViewAlbums" d:ItemsSource="{d:SampleData ItemCount=5}" MouseDoubleClick="listViewAlbums_MouseDoubleClick" Margin="11,215,9,363">
+        <Grid Grid.Column="0" Grid.Row="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBox x:Name="txtSearchBar" Grid.Row="0" Margin="0,0,0,10"
+                     Style="{StaticResource SearchBarPlaceholderStyle}"
+                     Tag="Search Library..."/>
+            <ListView x:Name="listViewAlbums" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}" MouseDoubleClick="listViewAlbums_MouseDoubleClick">
                 <ListView.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Add" Click="Add_Click"/>
@@ -82,18 +129,19 @@
                         <MenuItem Header="Remove" Click="Remove_Click"/>
                         <MenuItem Header="Duplicate" Click="Duplicate_Click"/>
                     </ContextMenu>
-
                 </ListView.ContextMenu>
             </ListView>
-
-            <TextBox x:Name="txtSearchBar" HorizontalAlignment="Center" VerticalAlignment="Top" Width="625" Margin="0,197,0,0"/>
         </Grid>
 
-        <Grid x:Name="grdMusicList" Margin="647,0,890,393">
-            <TextBox x:Name="txtConsole" Margin="10,50,10,0" Height="100" VerticalAlignment="Top"/>
-            <TabControl x:Name="playerTab" Margin="0,221,0,0" SelectionChanged="playerTab_SelectionChanged">
+        <Grid Grid.Column="1" Grid.Row="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBox x:Name="txtConsole" Grid.Row="0" Height="100" Margin="0,0,0,10"/>
+            <TabControl x:Name="playerTab" Grid.Row="1" SelectionChanged="playerTab_SelectionChanged">
                 <TabItem x:Name="musicLibTab" Header="Music Library">
-                    <ListView x:Name="listBoxMusicLib"  d:ItemsSource="{d:SampleData ItemCount=5}" MouseDoubleClick="listBoxMusicLib_MouseDoubleClick" SelectionChanged="listBoxMusicLib_SelectionChanged">
+                    <ListView x:Name="listBoxMusicLib" d:ItemsSource="{d:SampleData ItemCount=5}" MouseDoubleClick="listBoxMusicLib_MouseDoubleClick" SelectionChanged="listBoxMusicLib_SelectionChanged">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="ContextMenu" Value="{StaticResource mainCtx}"/>
@@ -112,14 +160,18 @@
                 </TabItem>
                 <TabItem x:Name="searchTab" Header="Search Results">
                     <Grid>
-                        <ListView x:Name="listBoxSearchResults" MouseDoubleClick="listBoxSearchResults_MouseDoubleClick" SelectionChanged="listBoxSearchResults_SelectionChanged" Margin="0,0,0,35">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <ListView x:Name="listBoxSearchResults" Grid.Row="0" MouseDoubleClick="listBoxSearchResults_MouseDoubleClick" SelectionChanged="listBoxSearchResults_SelectionChanged">
                             <ListView.ItemContainerStyle>
                                 <Style TargetType="ListBoxItem">
                                     <Setter Property="ContextMenu" Value="{StaticResource mainCtx}"/>
                                 </Style>
                             </ListView.ItemContainerStyle>
                         </ListView>
-                        <Label x:Name="lblNumOfRes" Content="" Margin="432,712,432,0"></Label>
+                        <Label x:Name="lblNumOfRes" Grid.Row="1" Content="" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,5,5,0"/>
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="playTab" Header="Play Queue">
@@ -132,33 +184,52 @@
                     </ListView>
                 </TabItem>
             </TabControl>
-
-
         </Grid>
 
-        <Grid x:Name="grdMetadata" Margin="1675,0,0,393">
-            <Image x:Name="albumArt" HorizontalAlignment="Left" VerticalAlignment="Bottom" Stretch="Uniform" Margin="0,0,0,250" />
+        <Grid Grid.Column="2" Grid.Row="0" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Image x:Name="albumArt" Grid.Row="1" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
         </Grid>
 
-        <Grid x:Name="grdPlayer" Margin="0,996,0,-261">
-            <Button x:Name="btn_play" Content="Play" Margin="1137,138,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btn_play_Click" Height="48" Width="148"/>
-            <Button x:Name="btn_next" Content="Next" Margin="1315,138,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btn_next_Click" Height="48" Width="49"/>
-            <Button x:Name="btn_prev" Content="Prev" Margin="1056,140,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btn_prev_Click" Height="44" Width="52"/>
-            <Button x:Name="btn_loop" Content="Loop" Margin="1469,165,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btn_loop_Click"/>
-            <Button x:Name="btn_shuffle" Content="Shuffle" Margin="1526,164,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btn_shuffle_Click"/>
-            <Button x:Name="btn_shufflePlay" Content="Shuffle and Play" Margin="1137,80,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btn_shufflePlay_Click" Height="47" Width="148"/>
-            <Button x:Name="btn_seekBack" Content="&lt;- 5" Margin="1004,162,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btn_seekBack_Click" RenderTransformOrigin="0.766,0.979"/>
-            <Button x:Name="btn_seekForw" Content="5 -&gt;" Margin="1389,164,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="btn_seekForw_Click"/>
+        <Grid Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            <Label Style="{StaticResource Outlined}" x:Name="lblSongName" Content="Song Name" Margin="12,100,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-            <Label Style="{StaticResource Outlined}" x:Name="lblSongLength" Content="00:00" Margin="2500,164,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            <Label Style="{StaticResource Outlined}" x:Name="lblCurrentTime" Content="00:00" Margin="12,161,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Label Style="{StaticResource Outlined}" x:Name="lblSongName" Content="Song Name"
+                   Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,10"/>
 
-            <Slider x:Name="seekSlider" Minimum="0" Maximum="1" ValueChanged="SeekSlider_ValueChanged" Style="{StaticResource MySliderStyle}" Margin="12,202,8,398" Panel.ZIndex="1" IsMoveToPointEnabled="True" PreviewMouseLeftButtonDown="SeekSlider_PreviewMouseLeftButtonDown"/>
+            <Label Style="{StaticResource Outlined}" x:Name="lblCurrentTime" Content="00:00" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0"/>
+            <Slider x:Name="seekSlider" Minimum="0" Maximum="1" ValueChanged="SeekSlider_ValueChanged" Style="{StaticResource MySliderStyle}" Grid.Row="1" Grid.Column="1" Margin="5,0"
+                    IsMoveToPointEnabled="True"  />
+            <Label Style="{StaticResource Outlined}" x:Name="lblSongLength" Content="00:00" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,0,0,0"/>
 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,5">
+                <Button x:Name="btn_shufflePlay" Content="Shuffle and Play" Click="btn_shufflePlay_Click" Margin="5" Width="150" Height="40"/>
+                <Button x:Name="btn_play" Content="Play" Click="btn_play_Click" Margin="5" Width="70" Height="40"/>
+            </StackPanel>
 
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,0">
+                <Button x:Name="btn_seekBack" Content="&lt;- 5" Click="btn_seekBack_Click" Margin="5"/>
+                <Button x:Name="btn_prev" Content="Prev" Click="btn_prev_Click" Margin="5"/>
+                <Button x:Name="btn_next" Content="Next" Click="btn_next_Click" Margin="5"/>
+                <Button x:Name="btn_seekForw" Content="5 -&gt;" Click="btn_seekForw_Click" Margin="5"/>
+                <Button x:Name="btn_shuffle" Content="Shuffle" Click="btn_shuffle_Click" Margin="5"/>
+                <Button x:Name="btn_loop" Content="Loop" Click="btn_loop_Click" Margin="5"/>
+            </StackPanel>
         </Grid>
-
     </Grid>
-
 </Window>
